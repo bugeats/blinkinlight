@@ -2,14 +2,14 @@ import React from 'react';
 
 const Lamp = props => {
     const style = {
-        width: '200px',
+        width: '100px',
         height: '100px',
-        backgroundColor: props.color,
+        backgroundColor: 'red',
         opacity: props.lit ? 1 : 0.1,
         borderRadius: '50px'
     };
 
-    return (<div style={style}>Lamp</div>);
+    return (<div style={style}></div>);
 };
 
 export default Lamp;

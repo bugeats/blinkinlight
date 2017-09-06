@@ -21,9 +21,7 @@ class App extends React.Component {
         return (
           <div className='app'>
             <h1>Blinkinlight Dev Harness</h1>
-            <div className='lamp-container'>
-              <Lamp lit={ this.state.lit }/>
-            </div>
+            <Lamp lit={ this.state.lit }/>
           </div>
         );
     }

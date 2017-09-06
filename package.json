@@ -1,0 +1,36 @@
+{
+  "name": "blinkinlight",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "tape",
+    "clean": "rimraf dist/*",
+    "dev": "npm run clean; webpack-dev-server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bugeats/blinkinlight.git"
+  },
+  "author": "Chadwick Dahlquist",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bugeats/blinkinlight/issues"
+  },
+  "homepage": "https://github.com/bugeats/blinkinlight#readme",
+  "dependencies": {
+    "babel": "^6.23.0",
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^7.2.3",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.0",
+    "babel-preset-latest": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "html-webpack-plugin": "^2.30.1",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1",
+    "rimraf": "^2.6.1",
+    "webpack": "^3.5.5",
+    "webpack-dev-server": "^2.7.1"
+  }
+}

@@ -5,6 +5,8 @@ const PALLETE = {
     stars: '#BDE2EC'
 };
 
+// -----------------------------------------------------------------------------
+
 class Lamp extends React.Component {
 
     constructor(props) {
@@ -28,8 +30,8 @@ class Lamp extends React.Component {
         const angle = 0 + (Math.sin(turbulence) * 33);
 
         const accel = lit
-            ? state.accel + 0.01
-            : Math.max(0, state.accel - 0.01);
+            ? state.accel + 0.02
+            : Math.max(0, state.accel - 0.02);
 
         const nX = Math.sin(2 * Math.PI * (angle / 360));
         const nY = Math.cos(2 * Math.PI * (angle / 360));
@@ -49,9 +51,9 @@ class Lamp extends React.Component {
     render() {
         return (
           <LampContainer containerHeight={ 420 } containerWidth={ 420 }>
-            <StarField depthFactor={ 1.00 } posX={ this.state.posX } posY={ this.state.posY }/>
-            <StarField depthFactor={ 0.75 } posX={ this.state.posX } posY={ this.state.posY }/>
-            <StarField depthFactor={ 0.50 } posX={ this.state.posX } posY={ this.state.posY }/>
+            <StarField depthFactor={ (3/4) } posX={ this.state.posX } posY={ this.state.posY }/>
+            <StarField depthFactor={ (2/4) } posX={ this.state.posX } posY={ this.state.posY }/>
+            <StarField depthFactor={ (1/4) } posX={ this.state.posX } posY={ this.state.posY }/>
             <Guy lit={ this.props.lit } angle={ this.state.angle } width={ 300 } height={ 300 }/>
           </LampContainer>
         );
@@ -126,17 +128,19 @@ const StarField = ({
     posX,
     posY
 }) => {
-    const bgX = -(posX * depthFactor);
-    const bgY = -(posY * depthFactor);
+    const dpt = bound(depthFactor, 0, 1);
+    const bgX = -(posX * dpt);
+    const bgY = -(posY * dpt);
+    const prc = (0 + (50 * dpt));
     const style = {
         position: 'absolute',
         top: '0',
         left: '0',
         right: '0',
         bottom: '0',
-        zIndex: `${ depthFactor * 100 }`,
-        backgroundImage: `url('data:image/svg+xml;base64,${ genStarBg() }')`,
-        backgroundSize: `${ 100 * depthFactor }px ${ 100 * depthFactor }px`,
+        zIndex: `${ Math.round(dpt * 100) }`,
+        backgroundImage: `url('data:image/svg+xml;base64,${ genStarBg(dpt) }')`,
+        backgroundSize: `${ prc }%`,
         backgroundPosition: `${ bgX }px ${ bgY }px`
     };
     return (
@@ -147,12 +151,49 @@ const StarField = ({
 
 // Helpers ---------------------------------------------------------------------
 
-function genStarBg() {
+function genStarBg(depthFactor) {
+    const color = colorInterpolate(PALLETE.space, PALLETE.stars, depthFactor);
     return (btoa(`<?xml version="1.0" encoding="UTF-8"?>
-        <svg width="200px" height="200px" viewBox="0 0 200 200" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-            <polygon vector-effect="non-scaling-stroke" stroke="none" fill="${ PALLETE.stars }" points="50 60 38.244295 66.1803399 40.4894348 53.0901699 30.9788697 43.8196601 44.1221475 41.9098301 50 30 55.8778525 41.9098301 69.0211303 43.8196601 59.5105652 53.0901699 61.755705 66.1803399"></polygon>
-        </svg>
+      <svg width="174px" height="300px" viewBox="0 0 174 300" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <g stroke="none" fill="none">
+          <g transform="translate(30.000000, 100.000000)">
+            <polygon fill="${ color }" points="100 104.349127 93.2016261 107.923243 94.5 100.353143 89 94.9919678 96.6008131 93.887505 100 87 103.399187 93.887505 111 94.9919678 105.5 100.353143 106.798374 107.923243"></polygon>
+          </g>
+          <g transform="translate(-57.000000, -50.000000)">
+            <polygon fill="${ color }" points="100 104.349127 93.2016261 107.923243 94.5 100.353143 89 94.9919678 96.6008131 93.887505 100 87 103.399187 93.887505 111 94.9919678 105.5 100.353143 106.798374 107.923243"></polygon>
+          </g>
+        </g>
+      </svg>
     `));
 }
+
+function bound(n, min, max) {
+    return Math.max(Math.min(max, n), min);
+}
+
+function colorInterpolate(color1, color2, factor) {
+    const fa = bound(factor, 0, 1);
+    const c1 = hexColorToRgb(color1);
+    const c2 = hexColorToRgb(color2);
+    const r = c1.r + ((c2.r - c1.r) * fa);
+    const g = c1.g + ((c2.g - c1.g) * fa);
+    const b = c1.b + ((c2.b - c1.b) * fa);
+    return rgbToHex(r, g, b);
+}
+
+function hexColorToRgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : null;
+}
+
+function rgbToHex(r, g, b) {
+    return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+}
+
+// Export ----------------------------------------------------------------------
 
 export default Lamp;

@@ -15,12 +15,18 @@ class Lamp extends React.Component {
         this.state = {
             accel: 0,
             angle: 90,
+            lagX: 300,
+            lagY: 200,
             posX: 300,
             posY: 200,
             turbulence: 0
         };
 
-        setInterval(() => this.tick(), 0.06);
+        setInterval(() => {
+            requestAnimationFrame(() => {
+                this.tick();
+            });
+        }, 0.06);
     }
 
     tick() {
@@ -31,7 +37,7 @@ class Lamp extends React.Component {
 
         const accel = this.props.lit
             ? bound(state.accel + 0.02, 0, 1)
-            : bound(state.accel - 0.005, 0, 1);
+            : bound(state.accel - 0.004, 0, 1);
 
         const nX = Math.sin(2 * Math.PI * (angle / 360));
         const nY = Math.cos(2 * Math.PI * (angle / 360));
@@ -39,9 +45,14 @@ class Lamp extends React.Component {
         const posX = state.posX + (nX * accel * TOP_SPEED);
         const posY = state.posY - (nY * accel * TOP_SPEED);
 
+        const lagX = slew(state.lagX, posX, 0.90);
+        const lagY = slew(state.lagY, posY, 1.90);
+
         this.setState({
             accel,
             angle,
+            lagX,
+            lagY,
             posX,
             posY,
             turbulence
@@ -49,12 +60,20 @@ class Lamp extends React.Component {
     }
 
     render() {
+        const offX = this.state.lagX - this.state.posX;
+        const offY = this.state.lagY - this.state.posY;
+
         return (
           <LampContainer containerHeight={ 420 } containerWidth={ 420 }>
-            <StarField depthFactor={ (3/4) } posX={ this.state.posX } posY={ this.state.posY }/>
-            <StarField depthFactor={ (2/4) } posX={ this.state.posX } posY={ this.state.posY }/>
-            <StarField depthFactor={ (1/4) } posX={ this.state.posX } posY={ this.state.posY }/>
-            <Lander lit={ this.props.lit } accel={ this.state.accel } angle={ this.state.angle } width={ 220 } height={ 220 }/>
+            <StarField depthFactor={ (3/4) } posX={ this.state.posX - offX } posY={ this.state.posY - offY }/>
+            <StarField depthFactor={ (2/4) } posX={ this.state.posX - offX } posY={ this.state.posY - offY }/>
+            <StarField depthFactor={ (1/4) } posX={ this.state.posX - offX } posY={ this.state.posY - offY }/>
+            <Lander lit={ this.props.lit }
+                    offsetX={ offX }
+                    offsetY={ offY }
+                    accel={ this.state.accel }
+                    angle={ this.state.angle }
+                    width={ 220 } height={ 220 }/>
           </LampContainer>
         );
     }
@@ -89,8 +108,11 @@ const Lander = ({
     angle,
     height,
     lit,
+    offsetX,
+    offsetY,
     width
 }) => {
+    // console.log(offsetX, offsetY);
     const style = {
         position: 'absolute',
         top: '50%',
@@ -98,8 +120,8 @@ const Lander = ({
         width: `${ width }px`,
         height: `${ height }px`,
         zIndex: '1000',
-        marginLeft: `-${ width * 0.5 }px`,
-        marginTop: `-${ height * 0.5 }px`,
+        marginLeft: `-${ (width * 0.5) + offsetX }px`,
+        marginTop: `-${ (height * 0.5) + offsetY }px`,
         transform: `rotate(${ angle }deg)`
     };
 
@@ -183,6 +205,16 @@ function range(min, max, factor) {
 
 function curve(factor, amp) {
     return Math.sin((Math.PI / 2) * factor) * (amp || 1);
+}
+
+function slew(current, target, amount) {
+    if (current > target) {
+        return Math.max(current - amount, target);
+    }
+    if (current < target) {
+        return Math.min(current + amount, target);
+    }
+    return target;
 }
 
 function colorInterpolate(color1, color2, factor) {

@@ -5,7 +5,6 @@ const LIT_INTERVAL = 1000;
 import Lamp from './lamp';
 
 class App extends React.Component {
-
     constructor(props) {
         super(props);
         this.state = {
@@ -20,7 +19,6 @@ class App extends React.Component {
     render() {
         return (
           <div className='app'>
-            <h1>Blinkinlight Dev Harness</h1>
             <Lamp lit={ this.state.lit }/>
           </div>
         );

@@ -1,3 +1,6 @@
+const BL_AUTHOR = 'Chadwick Dahlquist';
+const BL_REPOSITORY_URL = 'https://github.com/bugeats/blinkinlight';
+
 import React from 'react';
 
 const TOP_SPEED = 2;
@@ -65,15 +68,18 @@ class Lamp extends React.Component {
 
         return (
           <LampContainer containerHeight={ 420 } containerWidth={ 420 }>
-            <StarField depthFactor={ (3/4) } posX={ this.state.posX - offX } posY={ this.state.posY - offY }/>
-            <StarField depthFactor={ (2/4) } posX={ this.state.posX - offX } posY={ this.state.posY - offY }/>
-            <StarField depthFactor={ (1/4) } posX={ this.state.posX - offX } posY={ this.state.posY - offY }/>
-            <Lander lit={ this.props.lit }
-                    offsetX={ offX }
-                    offsetY={ offY }
-                    accel={ this.state.accel }
-                    angle={ this.state.angle }
-                    width={ 220 } height={ 220 }/>
+            <LampScene>
+              <StarField depthFactor={ (3/4) } posX={ this.state.posX - offX } posY={ this.state.posY - offY }/>
+              <StarField depthFactor={ (2/4) } posX={ this.state.posX - offX } posY={ this.state.posY - offY }/>
+              <StarField depthFactor={ (1/4) } posX={ this.state.posX - offX } posY={ this.state.posY - offY }/>
+              <Lander lit={ this.props.lit }
+                      offsetX={ offX }
+                      offsetY={ offY }
+                      accel={ this.state.accel }
+                      angle={ this.state.angle }
+                      width={ 220 } height={ 220 }/>
+            </LampScene>
+            <LampAttribution/>
           </LampContainer>
         );
     }
@@ -88,16 +94,54 @@ const LampContainer = ({
 }) => {
     const style = {
         position: 'relative',
-        margin: 'auto',
+        margin: '40px auto',
         height: `${ containerHeight }px`,
-        width: `${ containerWidth }px`,
-        borderRadius: `${ containerHeight }px`,
-        overflow: 'hidden',
-        backgroundColor: `${ PALLETE.space }`,
-        border: '1px solid #ccc'
+        width: `${ containerWidth }px`
     };
     return (
       <div className='lamp-container' style={style}>{ children }</div>
+    );
+};
+
+// -----------------------------------------------------------------------------
+
+const LampAttribution = () => {
+    const textStyle = {
+        fontFamily: 'sans-serif',
+        fontSize: '14px',
+        color: '#CCCCCC'
+    };
+    const style = {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        bottom: '-30px',
+        textAlign: 'center'
+    };
+    return (
+      <div className='lamp-attribution' style={ Object.assign(style, textStyle) }>
+        Tribute by { BL_AUTHOR } (<a style={ textStyle } href={ BL_REPOSITORY_URL } rel='noopener noreferrer' target='_blank'>see source</a>).
+      </div>
+    );
+};
+
+// -----------------------------------------------------------------------------
+
+const LampScene = ({
+    children
+}) => {
+    const style = {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        bottom: 0,
+        right: 0,
+        borderRadius: '100%',
+        overflow: 'hidden',
+        backgroundColor: `${ PALLETE.space }`
+    };
+    return (
+      <div className='lamp-scene' style={style}>{ children }</div>
     );
 };
 

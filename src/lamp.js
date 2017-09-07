@@ -34,13 +34,14 @@ class Lamp extends React.Component { // eslint-disable-line no-undef
     // state is updated each time
     tick() {
         const { state } = this;
+        const { lit } = this.props;
 
         // turbulence swings the angle around
         const turbulence = state.turbulence + (0.01 * state.accel);
         const angle = 0 + (Math.sin(turbulence) * 33);
 
         // Acceleration of the Lander in space. Magic numbers here.
-        const accel = this.props.lit
+        const accel = lit
             ? bound(state.accel + 0.06, 0, 1)
             : bound(state.accel - 0.02, 0, 1);
 
@@ -52,14 +53,9 @@ class Lamp extends React.Component { // eslint-disable-line no-undef
         const posX = state.posX + (nX * accel * BL_SPEED_MAGIC_NUMBER);
         const posY = state.posY - (nY * accel * BL_SPEED_MAGIC_NUMBER);
 
-        const lagX = slew(state.lagX, posX, 4);
-        const lagY = slew(state.lagY, posY, 8);
-
         this.setState({
             accel,
             angle,
-            lagX,
-            lagY,
             posX,
             posY,
             turbulence
@@ -67,21 +63,16 @@ class Lamp extends React.Component { // eslint-disable-line no-undef
     }
 
     render() {
-        // Calculate 'camera lag' offsets.
-        const offX = this.state.lagX - this.state.posX;
-        const offY = this.state.lagY - this.state.posY;
         const primaryColor = this.props.color; // provided by app container
 
         return (
           <LampContainer containerHeight={ 420 } containerWidth={ 420 }>
             <LampScene>
-              <StarField depthFactor={ (3/4) } posX={ this.state.posX - offX } posY={ this.state.posY - offY }/>
-              <StarField depthFactor={ (2/4) } posX={ this.state.posX - offX } posY={ this.state.posY - offY }/>
-              <StarField depthFactor={ (1/4) } posX={ this.state.posX - offX } posY={ this.state.posY - offY }/>
+              <StarField depthFactor={ (3/4) } posX={ this.state.posX } posY={ this.state.posY }/>
+              <StarField depthFactor={ (2/4) } posX={ this.state.posX } posY={ this.state.posY }/>
+              <StarField depthFactor={ (1/4) } posX={ this.state.posX } posY={ this.state.posY }/>
               <Lander lit={ this.props.lit }
                       primaryColor={ primaryColor }
-                      offsetX={ offX }
-                      offsetY={ offY }
                       accel={ this.state.accel }
                       angle={ this.state.angle }
                       width={ 220 } height={ 220 }/>
@@ -158,8 +149,6 @@ const Lander = ({
     angle,
     height,
     lit,
-    offsetX,
-    offsetY,
     primaryColor,
     width
 }) => {
@@ -172,8 +161,8 @@ const Lander = ({
         // positioned in the center of the scene
         width: `${ width }px`,
         height: `${ height }px`,
-        marginLeft: `-${ (width * 0.5) + offsetX }px`,
-        marginTop: `-${ (height * 0.5) + offsetY }px`
+        marginLeft: `-${ (width * 0.5) }px`,
+        marginTop: `-${ (height * 0.5) }px`
     };
 
     const bulbFill = lit ? primaryColor : BL_PALLETE.stars;
@@ -269,18 +258,6 @@ function range(min, max, factor) {
 // convert 0..1 factor into a nice sine curve, with optional amplification.
 function curve(factor, amp) {
     return Math.sin((Math.PI / 2) * factor) * (amp || 1);
-}
-
-// Calculate next tick for a slew limiter function.
-// This is used to create a time delay / lag.
-function slew(current, target, amount) {
-    if (current > target) {
-        return Math.max(current - amount, target);
-    }
-    if (current < target) {
-        return Math.min(current + amount, target);
-    }
-    return target;
 }
 
 // Given two hex colors, interpolate between them based on 0..1 factor

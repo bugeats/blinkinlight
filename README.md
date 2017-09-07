@@ -8,7 +8,7 @@ It looks like this:
 
 Except that all the bits move around.
 
-[Read the source](lamp.js)
+[Read the source](src/lamp.js)
 
 ## Setup
 

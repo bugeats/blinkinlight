@@ -1,3 +1,6 @@
+// Hi there. I only tested this thing on webkit based browsers. Seems to work ok.
+// You can contact me via Github, or at chadwick(at)bugeats(dot)net
+
 const BL_AUTHOR = 'Chadwick Dahlquist';
 const BL_REPOSITORY_URL = 'https://github.com/bugeats/blinkinlight';
 
@@ -287,3 +290,12 @@ function rgbToHex(r, g, b) {
 // Export ----------------------------------------------------------------------
 
 export default Lamp;
+
+// < That's all folks >
+//  ------------------
+//         \   ^__^
+//          \  (oo)\_______
+//             (__)\       )\/\
+//                 ||----w |
+//                 ||     ||
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^

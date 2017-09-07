@@ -1,5 +1,15 @@
 # MAX BLINKINLIGHT
 
+My submission for the [Pop Art code exercise](https://tribute.popart.com/).
+
+It looks like this:
+
+![screenshot](screenshot.png)
+
+Except that all the bits move around.
+
+[Read the source](lamp.js)
+
 ## Setup
 
     npm install

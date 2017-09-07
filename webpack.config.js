@@ -2,6 +2,7 @@
 
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const webpack = require('webpack');
 
 const packageData = require('./package.json');
 
@@ -47,6 +48,9 @@ module.exports = {
         publicPath: '/'
     },
     plugins: [
+        new webpack.ProvidePlugin({
+            'React': 'react'
+        }),
         new HtmlWebpackPlugin({
             buildDate: (new Date()).toISOString(),
             env: process.env,

@@ -19,7 +19,7 @@ class App extends React.Component {
     render() {
         return (
           <div className='app'>
-            <Lamp lit={ this.state.lit }/>
+            <Lamp lit={ this.state.lit } color='red'/>
           </div>
         );
     }
